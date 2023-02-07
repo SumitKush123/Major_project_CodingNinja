@@ -2,9 +2,25 @@ const User = require('../models/user');
 
 
 module.exports.profile = function(req, res){
-    return res.render('user_profile', {
-        title: 'User Profile'
+   if(req.cookies.user_id){
+    User.findById(req.cookies.user_id, function(err,user){
+        if(user){
+            return res.render('user_profile', {
+                title: 'User Profile',
+                user: user
+            })
+        }
     })
+   }
+}
+module.exports.getAll=(req,res)=>{
+    User.find({})
+        .then(data=>{
+            res.send(data)
+        })
+        .catch(err=>{
+            res.status(500).send({message:err.message});
+        })
 }
 
 
@@ -23,7 +39,7 @@ module.exports.signIn = function(req, res){
     })
 }
 
-// get the sign up data
+// get the singn up data
 module.exports.create = function(req, res){
     if (req.body.password != req.body.confirm_password){
         return res.redirect('back');
@@ -48,5 +64,5 @@ module.exports.create = function(req, res){
 
 // sign in and create a session for the user
 module.exports.createSession = function(req, res){
-    // TODO later
+    return res.redirect('/');
 }
